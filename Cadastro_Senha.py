@@ -9,8 +9,6 @@ def limpar():
     os.system('cls')
 
 def cadastro():
-    root = tk.Tk()
-    root.withdraw()
 
     cadastro_login = input('Cadastre um novo usuário: ')
     while True:
@@ -22,6 +20,7 @@ def cadastro():
         varidacao_minuscula = False
         varidacao_numerais  = False
         varidacao_especiais = False
+
         cadastro_senha = input('Cadastre a senha: ')
 
         if len(cadastro_senha) < 8:
@@ -45,19 +44,23 @@ def cadastro():
 
 senha_salva = []
 login_salvo = []
+cadastrar = 'N'
 
 while True:
-    confirmacao = input('Possui cadastro: 1 - Sim  2 - Não ')
+    if cadastrar == 'S':
+        confirmacao = '2'
+    else:
+        confirmacao = input('Possui cadastro: 1 - Sim  2 - Não ')
 
     if confirmacao == '2':
         limpar()
         login, senha = cadastro()
         login_salvo.append(login)
-        senha_salva.append(senha)
-        
+        senha_salva.append(senha)    
     elif confirmacao == '1':
         if not senha_salva or not login_salvo:
             limpar()
+
             messagebox.showinfo('Erro', 'Nenhum usuário cadastrado! Cadastre um usuário!')
             login, senha = cadastro()
             login_salvo.append(login)
@@ -71,6 +74,8 @@ while True:
                 login_informado = input('Login:')
                 senha_informado = input('Senha:')
 
+                tentativa += 1
+
                 if login_informado in login_salvo:
                     index = login_salvo.index(login_informado)
                     if senha_informado == senha_salva[index]:
@@ -81,25 +86,23 @@ while True:
                 else: 
                     messagebox.showinfo('Erro', 'Login inexistente, tente novamente!')
 
-                tentativa += 1
+                limpar()
 
             if tentativa == 3:
                 messagebox.showinfo('Erro', 'Limite de tentativas excedidas, tente novamente mais tarde!')
                 break
 
-            cadastrar = input('Deseja cadastrar mais um usuario: S (sim) ou N (não): ').upper()
-            while cadastrar not in 'SN':
-                messagebox.showinfo('Erro', 'Opção não cadastrada!')
-                cadastrar = input('Digite somente "S" ou "N" ').upper()
+    limpar()
+    cadastrar = input('Deseja cadastrar mais um usuario: S (sim) ou N (não): ').upper()
+    while cadastrar not in 'SN':
+        messagebox.showinfo('Erro', 'Opção não cadastrada!')
+        cadastrar = input('Digite somente "S" ou "N" ').upper()
 
-            if cadastrar == 'S':
-                limpar()
-                continue
-            else:
-                break
-
+    if cadastrar == 'S':
+        limpar()
+        continue
     else:
-        messagebox.showinfo('Erro', 'Opção inválida! Escolha 1 ou 2.')
+        break
 
 if login_salvo:
     print("Usuários cadastrados:", login_salvo)
