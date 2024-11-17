@@ -1,82 +1,108 @@
 import os
+import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.withdraw()
 
 def limpar():
     os.system('cls')
 
 def cadastro():
+    root = tk.Tk()
+    root.withdraw()
+
     cadastro_login = input('Cadastre um novo usuário: ')
-    cadastro_senha = int(input('Cadastre a senha: '))
-    login_salvo = cadastro_login
-    senha_salva = cadastro_senha
+    while True:
+        maiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        minusculas = 'abcdefghijklmnopqrstuvwxyz'
+        numerais   = '0123456789'
+        especiais  = '!@#$%&*()_+=?!'
+        varidacao_maiuscula = False
+        varidacao_minuscula = False
+        varidacao_numerais  = False
+        varidacao_especiais = False
+        cadastro_senha = input('Cadastre a senha: ')
+
+        if len(cadastro_senha) < 8:
+            messagebox.showinfo('Erro', 'A senha tem que ter mais de 8 dígitos, tente novamente!')
+            continue
+
+        for i in cadastro_senha:
+            if i in maiusculas:
+                varidacao_maiuscula = True
+            elif i in minusculas:
+                varidacao_minuscula = True
+            elif i in numerais:
+                varidacao_numerais = True
+            elif i in especiais:
+                varidacao_especiais = True
+            
+        if varidacao_maiuscula and varidacao_minuscula and varidacao_numerais and varidacao_especiais:
+            return cadastro_login, cadastro_senha
+        else:
+            messagebox.showinfo('Erro','Senha fraca, digite novamente!')
+
+senha_salva = []
+login_salvo = []
 
 while True:
-    confirmacao = int(input('Possui cadastro: 1 - Sim  2 - Não '))
-    senha_salva = 0
-    login_salvo = ''
-    if confirmacao == 2:
+    confirmacao = input('Possui cadastro: 1 - Sim  2 - Não ')
+
+    if confirmacao == '2':
         limpar()
-        cadastro()
-    elif confirmacao == 1:
-        if senha_salva == 0 or login_salvo == '':
+        login, senha = cadastro()
+        login_salvo.append(login)
+        senha_salva.append(senha)
+        
+    elif confirmacao == '1':
+        if not senha_salva or not login_salvo:
             limpar()
-            print('Nenhum usuário cadastrado!')
-            print('Cadastre um usuário!')
-            print()
-            cadastro()
-    
-    limpar()
-    login = input('Login: ')
-    senha = int(input('Digite a senha: '))
-    login_salvo = login
-    senha_salva = senha
+            messagebox.showinfo('Erro', 'Nenhum usuário cadastrado! Cadastre um usuário!')
+            login, senha = cadastro()
+            login_salvo.append(login)
+            senha_salva.append(senha)
 
-    tentativa = 0 
-    while (senha == senha_salva and login == login_salvo):
-        limpar()
-        if tentativa == 2:
-            print('Excesso de tentativas, tente mais tarde!')
-            break
-        print('Login ou Senha incorreta, tente novamente!')
-        tentativa += 1
-        print()
-        login = input('Digite a login novamente: ')
-        senha = int(input('Digite a senha novamente: '))
-    if tentativa == 2:
-        break
+        else:
+            limpar()
 
-    limpar()
-    print('Bem Vindo!')
-    redefinir = input('Deseja redefinir a senha: S (sim) ou N (não): ').upper()
-    while redefinir not in 'SN':
-        correcao = input('Digite somente "S" ou "N" ')
-        redefinir = correcao.upper()
-    print()
-    if redefinir == 'S':
-        nova_senha = int(input('Defina uma nova senha: '))
-        senha_salva = nova_senha
-    elif redefinir == 'N':
-        break
+            tentativa = 0 
+            while tentativa < 3:
+                login_informado = input('Login:')
+                senha_informado = input('Senha:')
 
-# problema com recadastro de senha
+                if login_informado in login_salvo:
+                    index = login_salvo.index(login_informado)
+                    if senha_informado == senha_salva[index]:
+                        messagebox.showinfo('Sucesso', 'Bem Vindo!')     
+                        break
+                    else:
+                        messagebox.showinfo('Erro', 'Senha incorreta, tente novamente!')
+                else: 
+                    messagebox.showinfo('Erro', 'Login inexistente, tente novamente!')
 
-'''
-login_salvo = input('Login: ')
-senha_salva = int(input('Digite a senha: '))
+                tentativa += 1
 
-tentativa = 0
-while True:
-    limpar()
-    login = input('Digite o login: ')
-    senha = int(input('Digite a senha: '))
+            if tentativa == 3:
+                messagebox.showinfo('Erro', 'Limite de tentativas excedidas, tente novamente mais tarde!')
+                break
 
-    if login == login_salvo and senha == senha_salva:
-        print('Login realizado com sucesso!')
-        break
+            cadastrar = input('Deseja cadastrar mais um usuario: S (sim) ou N (não): ').upper()
+            while cadastrar not in 'SN':
+                messagebox.showinfo('Erro', 'Opção não cadastrada!')
+                cadastrar = input('Digite somente "S" ou "N" ').upper()
+
+            if cadastrar == 'S':
+                limpar()
+                continue
+            else:
+                break
+
     else:
-        print('Login ou Senha incorreta, tente novamente!')
-        tentativa += 1
+        messagebox.showinfo('Erro', 'Opção inválida! Escolha 1 ou 2.')
 
-    if tentativa >= 2:
-        print('Excesso de tentativas, tente mais tarde!')
-        break
-'''
+if login_salvo:
+    print("Usuários cadastrados:", login_salvo)
+else:
+    print("Nenhum usuário foi cadastrado.")
+
